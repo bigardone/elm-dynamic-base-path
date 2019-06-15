@@ -5,7 +5,7 @@ import Browser.Navigation as Navigation
 import Html as Html exposing (Html)
 import Html.Attributes as Html
 import Route exposing (Route)
-import Url
+import Url exposing (Url)
 
 
 
@@ -28,19 +28,16 @@ type alias Navigation =
     }
 
 
-initialModel : Flags -> Url.Url -> Navigation.Key -> Model
-initialModel ({ basePath } as flags) url key =
-    { flags = flags
-    , navigation =
-        { key = key
-        , route = Route.fromUrl basePath url
-        }
-    }
-
-
-init : Flags -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( initialModel flags url key, Cmd.none )
+init : Flags -> Url -> Navigation.Key -> ( Model, Cmd Msg )
+init ({ basePath } as flags) url key =
+    ( { flags = flags
+      , navigation =
+            { key = key
+            , route = Route.fromUrl basePath url
+            }
+      }
+    , Cmd.none
+    )
 
 
 
@@ -49,11 +46,11 @@ init flags url key =
 
 type Msg
     = UrlRequested Browser.UrlRequest
-    | UrlChange Url.Url
+    | UrlChange Url
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ flags } as model) =
+update msg ({ flags, navigation } as model) =
     case msg of
         UrlRequested urlRequest ->
             case urlRequest of
@@ -64,10 +61,6 @@ update msg ({ flags } as model) =
                     ( model, Navigation.load href )
 
         UrlChange url ->
-            let
-                navigation =
-                    model.navigation
-            in
             ( { model
                 | navigation =
                     { navigation
@@ -172,7 +165,7 @@ subscriptions _ =
 
 
 
--- INIT
+-- MAIN
 
 
 main : Program Flags Model Msg

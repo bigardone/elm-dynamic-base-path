@@ -27,30 +27,26 @@ parser =
 
 
 fromUrl : String -> Url -> Route
-fromUrl baseUrl url =
-    { url | path = String.replace baseUrl "" url.path }
+fromUrl basePath url =
+    { url | path = String.replace basePath "" url.path }
         |> Parser.parse parser
         |> Maybe.withDefault NotFound
 
 
 toString : Route -> String
 toString route =
-    let
-        pieces =
-            case route of
-                Home ->
-                    []
+    case route of
+        Home ->
+            ""
 
-                Projects ->
-                    [ "projects" ]
+        Projects ->
+            "projects"
 
-                Tasks ->
-                    [ "tasks" ]
+        Tasks ->
+            "tasks"
 
-                Configuration ->
-                    [ "configuration" ]
+        Configuration ->
+            "configuration"
 
-                NotFound ->
-                    [ "not-found" ]
-    in
-    String.join "/" pieces
+        NotFound ->
+            "not-found"
